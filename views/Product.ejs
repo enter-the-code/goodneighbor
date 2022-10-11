@@ -13,7 +13,8 @@
 <body>
 	<%- include("navBar.ejs") %>
 		<div class="cont">
-			<div class="pos" style="background-color:#D8E3E7;display:flex; justify-content:center; width: 100vw; position:reletive;height:100vh;">
+			<div class="pos"
+				style="background-color:#D8E3E7;display:flex; justify-content:center; width: 100vw; position:reletive;height:100vh;">
 				<div class="product-text">
 					상품 목록
 				</div>
@@ -53,7 +54,6 @@ l-24 -60 0 -725 c0 -720 0 -725 22 -795 59 -188 189 -314 379 -367 78 -22 88
 				<% for (let i=0; i < dataValues.length; i++){ %>
 					<a class="product-item-window" href="/detail/<%= dataValues[i]['product_id'] %>">
 						<% var pro=dataValues[i]['product_img_src'].split("imgParseStandard"); %>
-
 							<img src="/<%= pro[1] %>" alt="" />
 							<input id="product_id" class="product-id" value="<%= dataValues[i]['product_id'] %>" />
 							<div class="product-info-wrapper">
@@ -74,31 +74,70 @@ l-24 -60 0 -725 c0 -720 0 -725 22 -795 59 -188 189 -314 379 -367 78 -22 88
 			</section>
 		</div>
 		<%- include("footer.ejs") %>
-			
+
 			<script>
-				$(document).ready(function(){
-					setTimeout(()=>{
+				let count = "<%=count%>"
+				console.log(count)
+				$(document).ready(function () {
+					setTimeout(() => {
 						$('html, body').scrollTop($(".pos").height())
-					},3000)
+					}, 3000)
 				});
 				console.log();
+				var offset = 4;
 				const path1 = document.querySelector(".path3");
 				const path1Length = path1.getTotalLength();
 				console.log(path1Length)
-				const goDetail = (obj) => {
-					axios({
-						url: "/api/detail",
-						method: "post",
-						// post방식 일때는 params가 data로 변경
-						data: { product_id: $(obj).children("#product_id").val() },
-					})
-						.then((response) => {
-							console.log(response);
-						})
-						.catch((error) => {
-							console.log(error);
-						});
-				};
+				$(window).scroll(function () {
+					var scrollTop = $(window).scrollTop();
+					var innerHeight = $(window).height();
+					var scrollHeight = $(document).height();
+					if (scrollTop + innerHeight >= scrollHeight) {
+						//스크롤이 바닥치면 뭐할지 여기에 정의 시작
+						if (offset < count) {
+							axios({
+								url: "/takeproduct",
+								method: "get",
+								// post방식 일때는 params가 data로 변경
+								params: {offset:offset},
+							})
+								.then((response) => {
+									offset += 3
+									console.log(response.data);
+									for(let i=0;i<response.data.dataValues.length;i++){
+										let arr=response.data.dataValues[i].product_img_src.split("imgParseStandard");
+										let img=arr[1];
+										$(".product-item").append(`<a class="product-item-window" href="/detail/${response.data.dataValues[i].product_id}">
+												<img src="/${img}" alt="" />
+												<input id="product_id" class="product-id" value="${response.data.dataValues[i].product_id}" />
+												<div class="product-info-wrapper">
+													<div class="product-name">
+														${response.data.dataValues[i].product_name}
+													</div>
+													<div class="product-price-wrapper">
+														<div class="product-price">
+															${response.data.dataValues[i].product_price}
+														</div>
+														<div class="product-upload-time">
+															${response.data.datetime_arr[i]}
+														</div>
+													</div>
+												</div>
+										</a>`)
+									}
+									console.log(arr);
+									
+								})
+								.catch((error) => {
+									console.log(error);
+								});
+						}
+						else {
+							console.log("끝남 ㅋㅋㅋㅋ")
+						}
+					}
+
+				});
 			</script>
 </body>
 

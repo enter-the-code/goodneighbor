@@ -47,7 +47,7 @@ router.get("/profile", memberController.accessProfile); // 프로필 접근 성�
 router.get("/product", productController.products); // 로그인 하지 않은 프로턱트 페이지 렌더
 router.get("/product/:search", productController.products);
 router.get("/detail/:id", productController.showDetail);
-
+router.get("/takeproduct",productController.takeProduct)
 router.get("/jimm", productController.Jimm);
 router.get("/myproduct", productController.Myproduct);
 

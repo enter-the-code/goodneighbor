@@ -5,16 +5,12 @@ const { Product, WishList, OrderList, Member, Address } = require("../Model");
 const sequelize = require("sequelize");
 const session = require("express-session");
 const Op = sequelize.Op;
-
-exports.products = async (req, res) => {
-	let is_login = false;
+exports.takeProduct = async (req, res) => {
 	let serchCategory = {};
-	let myPoint = undefined;
 	let searchtag = "";
-
+	console.log(req.query.offset)
 	if (req.params.search != undefined) searchtag = req.params.search;
 	if (req.session.user !== undefined) {
-		is_login = true;
 		let include = [{ model: Address, attributes: ["city", "dong"] }];
 		const result = await Member.findOne({
 			include: include,
@@ -23,9 +19,9 @@ exports.products = async (req, res) => {
 		//myPoint = result.address.dataValues;
 		serchCategory = result.address.dataValues;
 	}
-	console.log("serchcate", serchCategory);
-	console.log("mypoint", myPoint);
-
+	// console.log("serchcate", serchCategory);
+	// console.log("mypoint", myPoint);
+	// console.log("count",count);
 	const result = await Product.findAll({
 		include: [
 			{
@@ -41,6 +37,79 @@ exports.products = async (req, res) => {
 			},
 		],
 		where: { product_name: { [Op.like]: "%" + searchtag + "%" } },
+		offset:Number(req.query.offset),
+		limit:3
+	});
+	//console.log(result)
+	let dataValues = [];
+	let datetime_arr = [];
+	for (let i of result) {
+		dataValues.push(i.dataValues);
+		datetime_arr.push(
+			`${String(i.dataValues["product_time"]).split(" ")[1]} ${
+				String(i.dataValues["product_time"]).split(" ")[2]
+			}`
+		);
+	}
+	res.send({
+		dataValues: dataValues,
+		datetime_arr: datetime_arr,
+	});
+	
+};
+exports.products = async (req, res) => {
+	let is_login = false;
+	let serchCategory = {};
+	let myPoint = undefined;
+	let searchtag = "";
+	
+	if (req.params.search != undefined) searchtag = req.params.search;
+	if (req.session.user !== undefined) {
+		is_login = true;
+		let include = [{ model: Address, attributes: ["city", "dong"] }];
+		const result = await Member.findOne({
+			include: include,
+			where: { member_id: Number(req.session.user) },
+		});
+		//myPoint = result.address.dataValues;
+		serchCategory = result.address.dataValues;
+	}
+	// console.log("serchcate", serchCategory);
+	// console.log("mypoint", myPoint);
+	let count = await Product.count({
+		include: [
+			{
+				model: Member,
+				required: true,
+				include: [
+					{
+						model: Address,
+						where: serchCategory,
+						required: true,
+					},
+				],
+			},
+		],
+		where: { product_name: { [Op.like]: "%" + searchtag + "%" } },
+	});
+	console.log("count",count);
+	const result = await Product.findAll({
+		include: [
+			{
+				model: Member,
+				required: true,
+				include: [
+					{
+						model: Address,
+						where: serchCategory,
+						required: true,
+					},
+				],
+			},
+		],
+		where: { product_name: { [Op.like]: "%" + searchtag + "%" } },
+		offset:0,
+		limit:3
 	});
 	//console.log(result)
 	let dataValues = [];
@@ -58,6 +127,7 @@ exports.products = async (req, res) => {
 		dataValues: dataValues,
 		category: "감자",
 		datetime_arr: datetime_arr,
+		count:count
 	});
 };
 
