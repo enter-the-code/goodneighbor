@@ -193,6 +193,7 @@
 							var html = "<div class='product-item'>";
 							let productsInfo = response.data.dataValues;
 							let productsImg = response.data.img;
+							console.log(productsImg);
 							for (let i = 0; i < productsInfo.length; i++) {
 								let arr = ["교환", "나눔"];
 								html += `<div class="product-item-window">
@@ -239,12 +240,12 @@
 						`);
 							var html = "<div class='product-item'>";
 							for (let i of response.data) {
-								// console.log()
+								console.log(i);
 								let str = String(new Date(i.product_time)).split(" ");
 								let updateTime = new Date(i.product_time).getDay();
 								let arr = ["교환", "나눔"];
 								html += `<div class="product-item-window">
-								<img class="mypimg" src="${i.product_img_src}" alt="" />
+								<img class="mypimg" src="${i.product_img_src.split("imgParseStandard")[1]}" alt="" />
 								<div class="product-info-wrapper">
 									<div class="product-name">${i.product_name}</div>
 									<div class="product-price-wrapper">

@@ -84,7 +84,7 @@ l-24 -60 0 -725 c0 -720 0 -725 22 -795 59 -188 189 -314 379 -367 78 -22 88
 					}, 3000)
 				});
 				console.log();
-				var offset = 4;
+				var offset = 3;
 				const path1 = document.querySelector(".path3");
 				const path1Length = path1.getTotalLength();
 				console.log(path1Length)
@@ -94,7 +94,7 @@ l-24 -60 0 -725 c0 -720 0 -725 22 -795 59 -188 189 -314 379 -367 78 -22 88
 					var scrollHeight = $(document).height();
 					if (scrollTop + innerHeight >= scrollHeight) {
 						//스크롤이 바닥치면 뭐할지 여기에 정의 시작
-						if (offset < count) {
+						if (offset <= count) {
 							axios({
 								url: "/takeproduct",
 								method: "get",
