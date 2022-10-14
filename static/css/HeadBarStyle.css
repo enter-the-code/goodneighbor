@@ -50,6 +50,7 @@
 .menu.find {
 	height: 40px;
 	width: 215px;
+	background-color: transparent;
 }
 
 .menu.find:focus {

@@ -62,7 +62,11 @@ l-24 -60 0 -725 c0 -720 0 -725 22 -795 59 -188 189 -314 379 -367 78 -22 88
 								</div>
 								<div class="product-price-wrapper">
 									<div class="product-price">
-										<%= dataValues[i]['product_price'] %>
+										<% if(dataValues[i]['product_price']){ %>
+											나눔
+										<% }else{ %>
+											교환
+										<% }%>
 									</div>
 									<div class="product-upload-time">
 										<%= datetime_arr[i]%>
@@ -116,7 +120,7 @@ l-24 -60 0 -725 c0 -720 0 -725 22 -795 59 -188 189 -314 379 -367 78 -22 88
 													</div>
 													<div class="product-price-wrapper">
 														<div class="product-price">
-															${response.data.dataValues[i].product_price}
+															${response.data.dataValues[i].product_price ? "나눔":"교환"}
 														</div>
 														<div class="product-upload-time">
 															${response.data.datetime_arr[i]}
